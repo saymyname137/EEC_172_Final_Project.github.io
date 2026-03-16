@@ -1,101 +1,293 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Smart Secure Motion Lock</title>
-
-    <style>
-        body{
-            font-family: Arial;
-            margin: 40px;
-            line-height: 1.6;
-        }
-
-        h1{
-            color:#2c3e50;
-        }
-
-        h2{
-            color:#34495e;
-            margin-top:40px;
-        }
-
-        img{
-            width:600px;
-            margin-top:15px;
-        }
-
-        .section{
-            margin-bottom:40px;
-        }
-    </style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Secure Motion Lock | EEC 172 Final Project</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+    <header class="hero">
+        <div class="container">
+            <p class="course-tag">EEC 172 Final Project</p>
+            <h1>Smart Secure Motion Lock</h1>
+            <p class="subtitle">
+                A CC3200-based embedded security system with motion detection,
+                password-controlled arming/disarming, and AWS IoT cloud alerts.
+            </p>
+            <p class="authors">Zijian Li • UC Davis</p>
+            <div class="hero-buttons">
+                <a href="#video" class="btn primary">Watch Demo</a>
+                <a href="#reproducibility" class="btn secondary">Reproducibility</a>
+            </div>
+        </div>
+    </header>
 
-<h1>Smart Secure Motion Lock</h1>
-<p><b>EEC 172 Final Project</b></p>
-<p>Zijian Li – UC Davis</p>
+    <main>
+        <section class="section">
+            <div class="container">
+                <h2>Project Overview</h2>
+                <div class="card">
+                    <p>
+                        This project implements a smart embedded security system using the TI CC3200 LaunchPad.
+                        The system monitors motion through an accelerometer, allows the user to arm or disarm
+                        the system using an IR remote password, and sends cloud alerts through AWS IoT when
+                        suspicious motion is detected.
+                    </p>
+                    <p>
+                        The goal of the project was to design a reproducible prototype that combines sensing,
+                        user interaction, state-machine-based control, and wireless cloud integration into
+                        one embedded system. The design uses multiple communication mechanisms, including
+                        I2C for sensor communication, IR signal decoding for password entry and commands,
+                        and Wi-Fi for remote alert publishing.
+                    </p>
+                    <p>
+                        The final prototype demonstrates both local embedded behavior and connected-device
+                        functionality. It supports states such as disarmed, armed, monitoring, and alert.
+                        When motion exceeds a threshold while the system is armed, the board triggers a cloud
+                        notification workflow and provides local feedback to the user.
+                    </p>
+                </div>
+            </div>
+        </section>
 
-<div class="section">
-<h2>Project Overview</h2>
+        <section class="section alt">
+            <div class="container">
+                <h2>Key Features</h2>
+                <div class="grid three">
+                    <div class="feature-card">
+                        <h3>Motion Detection</h3>
+                        <p>Uses an accelerometer to monitor movement and detect suspicious activity.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Password Control</h3>
+                        <p>Arms and disarms the system through IR remote input and password entry.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Cloud Alerts</h3>
+                        <p>Publishes alert messages to AWS IoT and supports email notification through SNS.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>State Machine Design</h3>
+                        <p>Organizes system behavior into clear states for robust embedded control.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Local Feedback</h3>
+                        <p>Provides visual output through LEDs and optional display feedback.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Multi-Protocol Integration</h3>
+                        <p>Combines I2C, IR decoding, Wi-Fi, and optional SPI in one project.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<p>
-This project implements a smart embedded security system using the TI CC3200 LaunchPad.
-The system monitors motion using an accelerometer and allows the user to arm or disarm
-the system through an IR remote password. When suspicious motion is detected,
-the system sends an alert message to AWS IoT which can trigger an email notification.
-</p>
+        <section class="section">
+            <div class="container">
+                <h2>Functional Specification</h2>
+                <div class="two-column">
+                    <div class="card">
+                        <img src="images/state-machine.png" alt="State machine diagram">
+                        <p class="caption">Figure 1. High-level state machine of the Smart Secure Motion Lock.</p>
+                    </div>
+                    <div class="card">
+                        <p>
+                            The system starts in a disarmed or idle state. The user enters a password using
+                            the IR remote to arm the system. Once armed, the board transitions into a monitoring
+                            state and continuously checks the accelerometer readings.
+                        </p>
+                        <p>
+                            If the measured motion exceeds the selected threshold, the device enters an alert
+                            state. In this state, it generates local feedback and publishes an alert message
+                            to AWS IoT. The system may then be reset or disarmed through the correct remote input.
+                        </p>
+                        <p>
+                            This state-machine design makes the project easier to debug, explain, and reproduce.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-</div>
+        <section class="section alt">
+            <div class="container">
+                <h2>System Architecture</h2>
+                <div class="two-column">
+                    <div class="card">
+                        <img src="images/architecture.png" alt="System architecture diagram">
+                        <p class="caption">Figure 2. System architecture and major communication paths.</p>
+                    </div>
+                    <div class="card">
+                        <p>
+                            The CC3200 LaunchPad serves as the central controller of the system. The
+                            accelerometer communicates with the CC3200 through the I2C interface and provides
+                            motion data. The IR receiver captures input from the remote and allows password
+                            entry or user commands.
+                        </p>
+                        <p>
+                            When an alert is triggered, the CC3200 uses its Wi-Fi interface to publish a
+                            message to AWS IoT. A cloud rule can then forward the event to SNS or another
+                            notification service, allowing the user to receive an email alert. Local feedback
+                            is provided through LEDs and optional display output.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<div class="section">
-<h2>System Architecture</h2>
+        <section class="section">
+            <div class="container">
+                <h2>Implementation</h2>
+                <div class="grid two">
+                    <div class="card">
+                        <h3>Hardware Implementation</h3>
+                        <p>
+                            The hardware setup is centered around the TI CC3200 LaunchPad. The accelerometer
+                            is connected through I2C and is sampled to measure motion. The IR receiver is
+                            connected to a GPIO pin and decoded in software based on pulse timing. Optional
+                            visual indicators such as LEDs or an OLED display are used to show the system state.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <h3>Software Implementation</h3>
+                        <p>
+                            The software is structured around a state machine that controls initialization,
+                            arming, monitoring, alert handling, and reset behavior. The program configures
+                            the sensor interface, reads motion values, decodes remote input, and determines
+                            whether an alert condition should be triggered.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <h3>Cloud Integration</h3>
+                        <p>
+                            AWS IoT is used as the cloud endpoint for alert reporting. The CC3200 connects
+                            using configured device credentials and publishes alert messages when motion is
+                            detected. AWS rules can then route these messages to SNS email notifications.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <h3>Engineering Focus</h3>
+                        <p>
+                            A major goal of the project was to create a clean and reproducible embedded system
+                            that combines sensing, communication, remote notification, and clear system behavior
+                            in one unified design.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<img src="images/architecture.png">
+        <section class="section alt" id="video">
+            <div class="container">
+                <h2>Video Demo</h2>
+                <div class="card">
+                    <p>
+                        The demo video showcases system startup, password entry, arming/disarming behavior,
+                        motion-triggered alert detection, and cloud-based notification flow.
+                    </p>
 
-<p>
-The CC3200 acts as the main controller. The accelerometer communicates through I2C
-to provide motion data. The IR receiver captures user input, and the WiFi interface
-sends alert messages to AWS IoT when motion is detected.
-</p>
+                    <!-- Replace VIDEO_ID_HERE with your YouTube video ID -->
+                    <div class="video-wrapper">
+                        <iframe
+                            src="https://www.youtube.com/embed/VIDEO_ID_HERE"
+                            title="Project Demo Video"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-</div>
+        <section class="section" id="reproducibility">
+            <div class="container">
+                <h2>Reproducibility</h2>
+                <div class="card">
+                    <p>
+                        This project was documented with reproducibility as a primary goal. A student attempting
+                        to rebuild the system would need the following:
+                    </p>
+                    <ul>
+                        <li>TI CC3200 LaunchPad</li>
+                        <li>Accelerometer module</li>
+                        <li>IR receiver and compatible IR remote</li>
+                        <li>Breadboard and jumper wires</li>
+                        <li>AWS IoT Thing, certificates, and policy configuration</li>
+                        <li>Code Composer Studio / TI SDK environment</li>
+                    </ul>
+                    <p>
+                        To reproduce the system, the hardware components are first connected to the CC3200.
+                        The embedded software is then configured for sensor reading, IR decoding, and state
+                        transitions. After that, AWS credentials and endpoint information are added so the
+                        board can publish alert messages. With both hardware and cloud setup completed, the
+                        system can be tested by arming the device and generating motion to trigger an alert.
+                    </p>
+                </div>
+            </div>
+        </section>
 
-<div class="section">
-<h2>Demo Video</h2>
+        <section class="section alt">
+            <div class="container">
+                <h2>Challenges</h2>
+                <div class="card">
+                    <p>
+                        One major challenge was integrating multiple subsystems into a single embedded project.
+                        The accelerometer required stable I2C communication, the IR receiver depended on
+                        accurate timing for signal decoding, and AWS connectivity required careful certificate
+                        and network setup.
+                    </p>
+                    <p>
+                        Another challenge was selecting motion thresholds that were sensitive enough to detect
+                        real movement without triggering too many false alerts. Additional debugging effort
+                        was also needed to ensure that sensing, user input, and cloud publishing all worked
+                        reliably together.
+                    </p>
+                </div>
+            </div>
+        </section>
 
-<iframe width="560" height="315"
-src="https://www.youtube.com/embed/VIDEOID"
-frameborder="0"
-allowfullscreen>
-</iframe>
+        <section class="section">
+            <div class="container">
+                <h2>Future Work</h2>
+                <div class="card">
+                    <p>
+                        Future improvements could include a more polished local display interface, event
+                        history storage, support for multiple passwords or users, and more advanced motion
+                        classification to distinguish between small vibrations and meaningful security events.
+                        The system could also be extended with additional sensors such as door switches,
+                        microphones, or cameras.
+                    </p>
+                </div>
+            </div>
+        </section>
 
-</div>
+        <section class="section alt">
+            <div class="container">
+                <h2>Project Gallery</h2>
+                <div class="gallery">
+                    <div class="gallery-item">
+                        <img src="images/hardware.jpg" alt="Hardware setup">
+                        <p class="caption">Hardware setup</p>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="images/demo-photo.jpg" alt="Project demo">
+                        <p class="caption">Live project demonstration</p>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="images/aws-email.png" alt="AWS email alert">
+                        <p class="caption">Cloud email alert output</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
-<div class="section">
-<h2>Reproducibility</h2>
-
-<p>
-To recreate this project, a student would need a CC3200 LaunchPad, an accelerometer
-module, an IR receiver, and an AWS IoT configuration. The software runs in
-Code Composer Studio and communicates with AWS through HTTPS.
-</p>
-
-</div>
-
-<div class="section">
-<h2>Challenges</h2>
-
-<p>
-Integrating multiple subsystems such as motion sensing, IR decoding,
-and cloud communication required careful debugging. Selecting an appropriate
-motion threshold was also necessary to avoid false alerts.
-</p>
-
-</div>
-
+    <footer>
+        <div class="container">
+            <p>Smart Secure Motion Lock • EEC 172 Final Project • UC Davis</p>
+        </div>
+    </footer>
 </body>
-
 </html>
